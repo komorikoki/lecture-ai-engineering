@@ -10,6 +10,8 @@ from transformers import pipeline
 from config import MODEL_NAME
 from huggingface_hub import HfFolder
 
+
+
 # --- アプリケーション設定 ---
 st.set_page_config(page_title="Gemma Chatbot", layout="wide")
 
@@ -22,6 +24,8 @@ database.init_db()
 
 # データベースが空ならサンプルデータを投入
 data.ensure_initial_data()
+# set background color to black
+
 
 # LLMモデルのロード（キャッシュを利用）
 # モデルをキャッシュして再利用
@@ -37,45 +41,49 @@ def load_model():
             model_kwargs={"torch_dtype": torch.bfloat16},
             device=device
         )
-        st.success(f"モデル '{MODEL_NAME}' の読み込みに成功しました。")
+        st.success(f"Success loading model '{MODEL_NAME}'")
         return pipe
     except Exception as e:
-        st.error(f"モデル '{MODEL_NAME}' の読み込みに失敗しました: {e}")
-        st.error("GPUメモリ不足の可能性があります。不要なプロセスを終了するか、より小さいモデルの使用を検討してください。")
+        st.error(f"Failed to load model '{MODEL_NAME}': {e}")
+        st.error("There may be insufficient GPU memory. Please terminate unnecessary processes or consider using a smaller model.")
         return None
 pipe = llm.load_model()
 
 # --- Streamlit アプリケーション ---
-st.title("🤖 Gemma 2 Chatbot with Feedback")
-st.write("Gemmaモデルを使用したチャットボットです。回答に対してフィードバックを行えます。")
+st.title("llama 3.2-3B Chatbot with Feedback")
+st.write("This is Gemma model-based chatbot. You can provide feedback on the responses.")
 st.markdown("---")
 
-# --- サイドバー ---
-st.sidebar.title("ナビゲーション")
-# セッション状態を使用して選択ページを保持
+# --- Sidebar ---
+st.sidebar.title("Navigation")
+# --- Footer and others (optional) ---
+# --- Footer and others (optional) ---
+
+# Use session state to keep track of the selected page
 if 'page' not in st.session_state:
-    st.session_state.page = "チャット" # デフォルトページ
+    st.session_state.page = "Chat" # Default page
 
 page = st.sidebar.radio(
-    "ページ選択",
-    ["チャット", "履歴閲覧", "サンプルデータ管理"],
+    "Page Selection",
+    ["Chat", "View History", "Manage Sample Data"],
     key="page_selector",
-    index=["チャット", "履歴閲覧", "サンプルデータ管理"].index(st.session_state.page), # 現在のページを選択状態にする
-    on_change=lambda: setattr(st.session_state, 'page', st.session_state.page_selector) # 選択変更時に状態を更新
+    index=["Chat", "View History", "Manage Sample Data"].index(st.session_state.page), # Default page selection
+    on_change=lambda: setattr(st.session_state, 'page', st.session_state.page_selector) # Update state on selection change
 )
 
 
-# --- メインコンテンツ ---
-if st.session_state.page == "チャット":
+# --- Main Content ---
+if st.session_state.page == "Chat":
     if pipe:
         ui.display_chat_page(pipe)
     else:
-        st.error("チャット機能を利用できません。モデルの読み込みに失敗しました。")
-elif st.session_state.page == "履歴閲覧":
+        st.error("Chat functionality is unavailable. Failed to load the model.")
+elif st.session_state.page == "View History":
     ui.display_history_page()
-elif st.session_state.page == "サンプルデータ管理":
+elif st.session_state.page == "Manage Sample Data":
     ui.display_data_page()
 
-# --- フッターなど（任意） ---
+
 st.sidebar.markdown("---")
-st.sidebar.info("開発者: [Your Name]")
+st.sidebar.info("Developer: Komori Koki")
+

@@ -4,9 +4,9 @@ import pandas as pd
 from datetime import datetime
 import streamlit as st
 from config import DB_FILE
-from metrics import calculate_metrics # metricsを計算するために必要
+from metrics import calculate_metrics  # Required for calculating metrics
 
-# --- スキーマ定義 ---
+# --- Schema Definition ---
 TABLE_NAME = "chat_history"
 SCHEMA = f'''
 CREATE TABLE IF NOT EXISTS {TABLE_NAME}
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME}
  answer TEXT,
  feedback TEXT,
  correct_answer TEXT,
- is_correct REAL,      -- INTEGERからREALに変更 (0.5を許容するため)
+ is_correct REAL,      -- Changed from INTEGER to REAL (to allow 0.5)
  response_time REAL,
  bleu_score REAL,
  similarity_score REAL,
@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME}
  relevance_score REAL)
 '''
 
-# --- データベース初期化 ---
+# --- Database Initialization ---
 def init_db():
-    """データベースとテーブルを初期化する"""
+    """Initialize the database and table"""
     try:
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
@@ -35,19 +35,19 @@ def init_db():
         conn.close()
         print(f"Database '{DB_FILE}' initialized successfully.")
     except Exception as e:
-        st.error(f"データベースの初期化に失敗しました: {e}")
-        raise e # エラーを再発生させてアプリの起動を止めるか、適切に処理する
+        st.error(f"Failed to initialize the database: {e}")
+        raise e  # Re-raise the error to stop the app or handle it appropriately
 
-# --- データ操作関数 ---
+# --- Data Manipulation Functions ---
 def save_to_db(question, answer, feedback, correct_answer, is_correct, response_time):
-    """チャット履歴と評価指標をデータベースに保存する"""
+    """Save chat history and evaluation metrics to the database"""
     conn = None
     try:
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # 追加の評価指標を計算
+        # Calculate additional evaluation metrics
         bleu_score, similarity_score, word_count, relevance_score = calculate_metrics(
             answer, correct_answer
         )
@@ -59,33 +59,33 @@ def save_to_db(question, answer, feedback, correct_answer, is_correct, response_
         ''', (timestamp, question, answer, feedback, correct_answer, is_correct,
              response_time, bleu_score, similarity_score, word_count, relevance_score))
         conn.commit()
-        print("Data saved to DB successfully.") # デバッグ用
+        print("Data saved to DB successfully.")  # For debugging
     except sqlite3.Error as e:
-        st.error(f"データベースへの保存中にエラーが発生しました: {e}")
+        st.error(f"An error occurred while saving to the database: {e}")
     finally:
         if conn:
             conn.close()
 
 def get_chat_history():
-    """データベースから全てのチャット履歴を取得する"""
+    """Retrieve all chat history from the database"""
     conn = None
     try:
         conn = sqlite3.connect(DB_FILE)
-        # is_correctがREAL型なので、それに応じて読み込む
+        # Since is_correct is of type REAL, read it accordingly
         df = pd.read_sql_query(f"SELECT * FROM {TABLE_NAME} ORDER BY timestamp DESC", conn)
-        # is_correct カラムのデータ型を確認し、必要なら変換
+        # Check the data type of the is_correct column and convert if necessary
         if 'is_correct' in df.columns:
-             df['is_correct'] = pd.to_numeric(df['is_correct'], errors='coerce') # 数値に変換、失敗したらNaN
+             df['is_correct'] = pd.to_numeric(df['is_correct'], errors='coerce')  # Convert to numeric, set NaN on failure
         return df
     except sqlite3.Error as e:
-        st.error(f"履歴の取得中にエラーが発生しました: {e}")
-        return pd.DataFrame() # 空のDataFrameを返す
+        st.error(f"An error occurred while retrieving history: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame
     finally:
         if conn:
             conn.close()
 
 def get_db_count():
-    """データベース内のレコード数を取得する"""
+    """Get the number of records in the database"""
     conn = None
     try:
         conn = sqlite3.connect(DB_FILE)
@@ -94,34 +94,34 @@ def get_db_count():
         count = c.fetchone()[0]
         return count
     except sqlite3.Error as e:
-        st.error(f"レコード数の取得中にエラーが発生しました: {e}")
+        st.error(f"An error occurred while retrieving the record count: {e}")
         return 0
     finally:
         if conn:
             conn.close()
 
 def clear_db():
-    """データベースの全レコードを削除する"""
+    """Delete all records from the database"""
     conn = None
     confirmed = st.session_state.get("confirm_clear", False)
 
     if not confirmed:
-        st.warning("本当にすべてのデータを削除しますか？もう一度「データベースをクリア」ボタンを押すと削除が実行されます。")
+        st.warning("Are you sure you want to delete all data? Press the 'Clear Database' button again to confirm.")
         st.session_state.confirm_clear = True
-        return False # 削除は実行されなかった
+        return False  # Deletion was not executed
 
     try:
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
         c.execute(f"DELETE FROM {TABLE_NAME}")
         conn.commit()
-        st.success("データベースが正常にクリアされました。")
-        st.session_state.confirm_clear = False # 確認状態をリセット
-        return True # 削除成功
+        st.success("The database has been successfully cleared.")
+        st.session_state.confirm_clear = False  # Reset confirmation state
+        return True  # Deletion successful
     except sqlite3.Error as e:
-        st.error(f"データベースのクリア中にエラーが発生しました: {e}")
-        st.session_state.confirm_clear = False # エラー時もリセット
-        return False # 削除失敗
+        st.error(f"An error occurred while clearing the database: {e}")
+        st.session_state.confirm_clear = False  # Reset on error as well
+        return False  # Deletion failed
     finally:
         if conn:
             conn.close()

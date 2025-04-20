@@ -6,83 +6,82 @@ from database import save_to_db, get_db_count # DB操作関数をインポート
 # サンプルデータのリスト
 SAMPLE_QUESTIONS_DATA = [
     {
-        "question": "Pythonのリスト内包表記とは何ですか？",
-        "answer": "リスト内包表記は、既存のリストから新しいリストを作成するためのPythonの構文です。通常のfor文よりも簡潔に記述でき、パフォーマンスも向上する場合があります。",
-        "correct_answer": "Pythonのリスト内包表記は、リストを簡潔に作成するための構文で、`[expression for item in iterable if condition]`の形式で書きます。通常のforループよりも短く書けて、実行速度も速い場合があります。",
-        "feedback": "部分的に正確: 基本的な説明は正しいですが、具体的な構文例が示されていません",
+        "question": "What is Python list comprehension?",
+        "answer": "List comprehension is a Python syntax for creating a new list from an existing list. It is more concise than a regular for loop and can improve performance in some cases.",
+        "correct_answer": "Python list comprehension is a syntax for creating lists concisely, written in the form `[expression for item in iterable if condition]`. It is shorter than a regular for loop and can sometimes execute faster.",
+        "feedback": "Partially correct: The basic explanation is accurate, but no specific syntax example is provided.",
         "is_correct": 0.5,
         "response_time": 1.2
     },
     {
-        "question": "機械学習における過学習とは？",
-        "answer": "過学習（オーバーフィッティング）とは、機械学習モデルが訓練データに対して過度に適合し、新しいデータに対する汎化性能が低下する現象です。",
-        "correct_answer": "過学習（オーバーフィッティング）は、モデルがトレーニングデータに過度に適合し、未知のデータに対する予測性能が低下する現象です。モデルが訓練データのノイズまで学習してしまうことが原因です。",
-        "feedback": "正確: 過学習の本質をよく捉えています",
-        "is_correct": 1.0, # 整数ではなく浮動小数点数で統一
+        "question": "What is overfitting in machine learning?",
+        "answer": "Overfitting is a phenomenon where a machine learning model fits the training data too well, resulting in poor generalization to new data.",
+        "correct_answer": "Overfitting is a phenomenon where a model fits the training data too well, leading to reduced predictive performance on unseen data. It occurs when the model learns even the noise in the training data.",
+        "feedback": "Correct: It captures the essence of overfitting well.",
+        "is_correct": 1.0,
         "response_time": 1.5
     },
-    # ... (他のサンプルデータも同様に追加) ...
     {
-        "question": "量子コンピュータの基本原理は？",
-        "answer": "量子コンピュータは量子力学の原理に基づいて動作します。従来のビットの代わりに量子ビット（キュービット）を使用し、重ね合わせと量子もつれの特性により並列計算を実現します。",
-        "correct_answer": "量子コンピュータは量子力学的現象を利用した計算機で、従来のビットではなく量子ビット（キュービット）を使用します。キュービットは重ね合わせ状態をとることができ、複数の状態を同時に表現できます。また量子もつれにより、従来のコンピュータでは困難な特定の問題を効率的に解くことができます。",
-        "feedback": "部分的に正確: 基本概念は正しいですが、詳細な説明が不足しています",
+        "question": "What is the basic principle of quantum computing?",
+        "answer": "Quantum computing operates based on the principles of quantum mechanics. It uses qubits instead of classical bits and achieves parallel computation through superposition and quantum entanglement.",
+        "correct_answer": "Quantum computing is a computational system that utilizes quantum mechanical phenomena. Instead of classical bits, it uses qubits, which can exist in superposition states, representing multiple states simultaneously. Quantum entanglement enables solving specific problems efficiently, which are challenging for classical computers.",
+        "feedback": "Partially correct: The basic concept is accurate, but lacks detailed explanation.",
         "is_correct": 0.5,
         "response_time": 2.1
     },
     {
-        "question": "Streamlitとは何ですか？",
-        "answer": "Streamlitは、Pythonで書かれたデータサイエンスやAIアプリケーションを簡単に作成するためのオープンソースフレームワークです。数行のコードでインタラクティブなWebアプリを作成できます。",
-        "correct_answer": "Streamlitは、データサイエンティストやAIエンジニアがPythonを使って簡単にWebアプリケーションを構築できるフレームワークです。少ないコード量で、インタラクティブなダッシュボードやデータ可視化アプリケーションを作成できます。",
-        "feedback": "正確: Streamlitの基本概念と利点をよく説明しています",
+        "question": "What is Streamlit?",
+        "answer": "Streamlit is an open-source framework for creating data science and AI applications in Python. It allows building interactive web apps with just a few lines of code.",
+        "correct_answer": "Streamlit is a framework that enables data scientists and AI engineers to easily build web applications using Python. It allows creating interactive dashboards and data visualization applications with minimal code.",
+        "feedback": "Correct: It explains the basic concept and advantages of Streamlit well.",
         "is_correct": 1.0,
         "response_time": 0.9
     },
     {
-        "question": "ブロックチェーンの仕組みを説明してください",
-        "answer": "ブロックチェーンは、分散型台帳技術の一つで、データをブロックに格納し、暗号技術でリンクして改ざん防止を実現します。各ブロックには前のブロックのハッシュ値が含まれ、チェーン状に連結されています。",
-        "correct_answer": "ブロックチェーンは分散型台帳技術で、データブロックが暗号学的にリンクされた構造です。各ブロックには取引データとタイムスタンプ、前ブロックのハッシュ値が含まれます。分散型ネットワークでコンセンサスアルゴリズムにより検証され、改ざんが極めて困難なシステムを実現しています。",
-        "feedback": "部分的に正確: 基本的な説明はありますが、コンセンサスメカニズムについての言及がありません",
+        "question": "Explain the mechanism of blockchain.",
+        "answer": "Blockchain is a type of distributed ledger technology that stores data in blocks and links them using cryptography to prevent tampering. Each block contains the hash of the previous block, forming a chain.",
+        "correct_answer": "Blockchain is a distributed ledger technology where data blocks are cryptographically linked. Each block contains transaction data, a timestamp, and the hash of the previous block. It is validated by a consensus algorithm in a decentralized network, making it extremely resistant to tampering.",
+        "feedback": "Partially correct: The basic explanation is present, but there is no mention of the consensus mechanism.",
         "is_correct": 0.5,
         "response_time": 1.8
     },
-        {
-        "question": "ディープラーニングとは何ですか？",
-        "answer": "ディープラーニングは、複数の層からなるニューラルネットワークを用いた機械学習手法です。画像認識や自然言語処理など複雑なタスクに優れています。",
-        "correct_answer": "ディープラーニングは多層ニューラルネットワークを使用した機械学習の一種で、特徴抽出を自動的に行う能力があります。画像認識、自然言語処理、音声認識などの複雑なタスクで革命的な成果を上げており、大量のデータと計算リソースを活用して従来の手法を超える性能を実現しています。",
-        "feedback": "部分的に正確: 基本的な定義は正しいですが、詳細な説明が不足しています",
+    {
+        "question": "What is deep learning?",
+        "answer": "Deep learning is a machine learning method that uses neural networks with multiple layers. It excels at complex tasks like image recognition and natural language processing.",
+        "correct_answer": "Deep learning is a type of machine learning that uses multi-layered neural networks capable of automatically extracting features. It has achieved revolutionary results in tasks like image recognition, natural language processing, and speech recognition, leveraging large datasets and computational resources to outperform traditional methods.",
+        "feedback": "Partially correct: The basic definition is accurate, but lacks detailed explanation.",
         "is_correct": 0.5,
         "response_time": 1.3
     },
     {
-        "question": "SQLインジェクションとは何ですか？",
-        "answer": "SQLインジェクションは、Webアプリケーションの脆弱性を悪用して不正なSQLクエリを実行させる攻撃手法です。ユーザー入力を適切に検証・サニタイズしないことで発生します。",
-        "correct_answer": "SQLインジェクションは、Webアプリケーションのセキュリティ脆弱性を悪用した攻撃手法で、攻撃者がユーザー入力フィールドを通じて悪意のあるSQLコードを挿入し、データベースに不正なクエリを実行させます。これにより、データの漏洩、改ざん、削除などの被害が生じる可能性があります。防止策としては、パラメータ化クエリの使用、入力のバリデーション、最小権限の原則などがあります。",
-        "feedback": "正確: SQLインジェクションの本質と発生メカニズムをよく説明しています",
+        "question": "What is SQL injection?",
+        "answer": "SQL injection is an attack method that exploits vulnerabilities in web applications to execute malicious SQL queries. It occurs when user input is not properly validated or sanitized.",
+        "correct_answer": "SQL injection is an attack method that exploits security vulnerabilities in web applications, allowing attackers to insert malicious SQL code through user input fields and execute unauthorized queries on the database. This can lead to data leakage, modification, or deletion. Preventive measures include using parameterized queries, input validation, and the principle of least privilege.",
+        "feedback": "Correct: It explains the essence and mechanism of SQL injection well.",
         "is_correct": 1.0,
         "response_time": 1.6
     },
     {
-        "question": "NFTとは何ですか？",
-        "answer": "NFT（Non-Fungible Token）は、代替不可能なトークンで、デジタルアセットの所有権を証明するためのブロックチェーン技術です。デジタルアート、コレクティブル、音楽などに利用されています。",
-        "correct_answer": "NFT（Non-Fungible Token、非代替性トークン）はブロックチェーン上に記録された固有の識別子を持つデジタル資産です。通常の暗号通貨と異なり、各NFTは独自の価値を持ち、交換不可能です。デジタルアート、音楽、ゲーム内アイテム、バーチャル不動産など様々なデジタル資産の所有権証明や取引に利用されています。",
-        "feedback": "正確: NFTの基本概念とユースケースを明確に説明しています",
+        "question": "What is an NFT?",
+        "answer": "NFT (Non-Fungible Token) is a blockchain-based technology for proving ownership of digital assets. It is used for digital art, collectibles, music, and more.",
+        "correct_answer": "NFT (Non-Fungible Token) is a digital asset recorded on the blockchain with a unique identifier. Unlike cryptocurrencies, each NFT has its own value and is non-interchangeable. It is used for proving ownership and trading digital assets like digital art, music, in-game items, and virtual real estate.",
+        "feedback": "Correct: It clearly explains the basic concept and use cases of NFTs.",
         "is_correct": 1.0,
         "response_time": 1.4
     },
     {
-        "question": "Pythonのデコレータとは何ですか？",
-        "answer": "デコレータは、関数やメソッドを修飾するための構文で、@記号を使用します。関数の機能を変更したり拡張したりするための便利な方法です。",
-        "correct_answer": "Pythonのデコレータは、既存の関数やメソッドを修飾して機能を拡張するための構文です。@記号を使用して関数定義の前に配置します。デコレータは高階関数で、別の関数を引数として受け取り、新しい関数を返します。ロギング、認証、キャッシングなど、コードの重複を避けながら横断的関心事を実装するのに役立ちます。",
-        "feedback": "部分的に正確: 基本的な説明はありますが、デコレータが高階関数であることや具体的な使用例の説明が不足しています",
+        "question": "What is a Python decorator?",
+        "answer": "A decorator is a syntax for modifying functions or methods using the @ symbol. It is a convenient way to change or extend the functionality of a function.",
+        "correct_answer": "Python decorators are a syntax for extending the functionality of existing functions or methods. They are placed before a function definition using the @ symbol. Decorators are higher-order functions that take another function as an argument and return a new function. They are useful for implementing cross-cutting concerns like logging, authentication, and caching while avoiding code duplication.",
+        "feedback": "Partially correct: The basic explanation is present, but lacks details about higher-order functions and specific examples.",
         "is_correct": 0.5,
         "response_time": 1.2
     },
     {
-        "question": "コンテナ技術とは何ですか？",
-        "answer": "コンテナ技術は、アプリケーションとその依存関係をパッケージ化し、異なる環境で一貫して実行できるようにする軽量な仮想化技術です。",
-        "correct_answer": "コンテナ技術は、アプリケーションとその依存関係（ライブラリ、バイナリなど）を一つのパッケージにカプセル化する軽量な仮想化技術です。コンテナは仮想マシンよりも軽量で起動が速く、ホストOSのカーネルを共有します。Dockerが代表的なコンテナプラットフォームで、アプリケーションの開発、テスト、デプロイメントを効率化し、「どこでも同じように動作する」環境を提供します。",
-        "feedback": "部分的に正確: 基本的な説明はありますが、仮想マシンとの違いやDockerなどの具体例の説明が不足しています",
+        "question": "What is container technology?",
+        "answer": "Container technology is a lightweight virtualization technology that packages applications and their dependencies, enabling consistent execution across different environments.",
+        "correct_answer": "Container technology is a lightweight virtualization technology that encapsulates applications and their dependencies (libraries, binaries, etc.) into a single package. Containers are lighter than virtual machines, start quickly, and share the host OS kernel. Docker is a representative container platform that streamlines application development, testing, and deployment, providing an environment that 'works the same everywhere.'",
+        "feedback": "Partially correct: The basic explanation is present, but lacks details about differences from virtual machines and examples like Docker.",
         "is_correct": 0.5,
         "response_time": 1.1
     }
